@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>YT Clean Player</title>
+    <title>YouTube Clean</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body {
@@ -47,8 +47,7 @@
             cursor: pointer;
             font-weight: 600;
         }
-        button:hover { background: #ff0000; }
-        .wrapper {
+        .crop-container {
             position: absolute;
             top: 0;
             left: 0;
@@ -57,40 +56,41 @@
             overflow: hidden;
         }
         iframe {
+            position: absolute;
+            top: -65px;
+            left: 0;
             width: 100%;
-            height: 100%;
+            height: calc(100% + 65px);
             border: none;
-            display: block;
         }
     </style>
 </head>
 <body>
 
     <div id="bar">
-        <input id="u" placeholder="Dan link YouTube vao day...">
+        <input id="u" placeholder="Dán link YouTube vào đây...">
         <button onclick="playVideo()">Xem</button>
     </div>
 
-    <div class="wrapper">
+    <div class="crop-container">
         <iframe id="player" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>
     </div>
 
     <script>
         function getID(text) {
             var m = text.match(/(?:youtu\.be\/|watch\?v=|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/);
-            return m ? m[1] : (text.length === 11 ? text : null);
+            return m ? m[1] : (text.trim().length === 11 ? text.trim() : null);
         }
 
         function load(id) {
             if (!id) return;
-            localStorage.setItem('last_yt_id', id);
+            localStorage.setItem('yt_saved_id', id);
             window.location.hash = id;
-            var src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&modestbranding=1&rel=0&iv_load_policy=3&showinfo=0';
-            document.getElementById('player').src = src;
+            document.getElementById('player').src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&controls=1';
         }
 
         function playVideo() {
-            var val = document.getElementById('u').value.trim();
+            var val = document.getElementById('u').value;
             var id = getID(val);
             if (id) {
                 load(id);
@@ -104,12 +104,14 @@
             if (e.key === 'Enter') playVideo();
         });
 
-        window.onload = function() {
+        window.addEventListener('DOMContentLoaded', function() {
             var hashID = window.location.hash.replace('#', '');
-            var lastID = localStorage.getItem('last_yt_id');
-            var startID = hashID || lastID;
-            if (startID) load(startID);
-        };
+            var savedID = localStorage.getItem('yt_saved_id');
+            var idToPlay = hashID || savedID;
+            if (idToPlay) {
+                load(idToPlay);
+            }
+        });
     </script>
 </body>
 </html>
