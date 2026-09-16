@@ -2,10 +2,15 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>YouTube Full Window</title>
+    <title>YT Clean Player</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+        }
         #bar {
             position: fixed;
             top: 10px;
@@ -14,35 +19,47 @@
             z-index: 9999;
             display: flex;
             gap: 8px;
-            background: rgba(25, 25, 25, 0.85);
-            padding: 8px 14px;
-            border-radius: 25px;
-            opacity: 0.25;
-            transition: opacity 0.2s;
+            background: rgba(15, 15, 15, 0.85);
+            padding: 6px 14px;
+            border-radius: 20px;
+            opacity: 0.15;
+            transition: opacity 0.25s ease;
         }
-        #bar:hover, #bar:focus-within { opacity: 1; }
-        #url-input {
+        #bar:hover, #bar:focus-within {
+            opacity: 1;
+        }
+        input {
             width: 280px;
             padding: 6px 12px;
             border: 1px solid #444;
-            border-radius: 16px;
-            background: #111;
+            border-radius: 12px;
+            background: #181818;
             color: #fff;
-            outline: none;
             font-size: 13px;
+            outline: none;
         }
         button {
             padding: 6px 14px;
-            background: #e60000;
+            background: #cc0000;
             color: #fff;
             border: none;
-            border-radius: 16px;
+            border-radius: 12px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
         }
-        #player {
+        button:hover { background: #ff0000; }
+        .wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            overflow: hidden;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
             display: block;
         }
     </style>
@@ -50,48 +67,49 @@
 <body>
 
     <div id="bar">
-        <input type="text" id="url-input" placeholder="Dan link YouTube vao day...">
-        <button onclick="playVideo()">Xem ngay</button>
+        <input id="u" placeholder="Dan link YouTube vao day...">
+        <button onclick="playVideo()">Xem</button>
     </div>
 
-    <div id="player"></div>
+    <div class="wrapper">
+        <iframe id="player" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+    </div>
 
-    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        var player = null;
+        function getID(text) {
+            var m = text.match(/(?:youtu\.be\/|watch\?v=|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/);
+            return m ? m[1] : (text.length === 11 ? text : null);
+        }
 
-        function extractID(url) {
-            var m = url.match(/(?:youtu\.be\/|watch\?v=|embed\/|shorts\/)([\w-]{11})/);
-            return m ? m[1] : null;
+        function load(id) {
+            if (!id) return;
+            localStorage.setItem('last_yt_id', id);
+            window.location.hash = id;
+            var src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&modestbranding=1&rel=0&iv_load_policy=3&showinfo=0';
+            document.getElementById('player').src = src;
         }
 
         function playVideo() {
-            var val = document.getElementById('url-input').value.trim();
-            var id = extractID(val);
-            if (!id) {
-                alert('Link YouTube khong hop le!');
-                return;
-            }
-
-            if (player && typeof player.loadVideoById === 'function') {
-                player.loadVideoById(id);
+            var val = document.getElementById('u').value.trim();
+            var id = getID(val);
+            if (id) {
+                load(id);
+                document.getElementById('u').value = '';
             } else {
-                player = new YT.Player('player', {
-                    videoId: id,
-                    host: 'https://www.youtube-nocookie.com',
-                    playerVars: {
-                        autoplay: 1,
-                        playsinline: 1,
-                        origin: 'https://www.youtube.com',
-                        enablejsapi: 1
-                    }
-                });
+                alert('Link YouTube khong hop le!');
             }
         }
 
-        document.getElementById('url-input').addEventListener('keypress', function(e) {
+        document.getElementById('u').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') playVideo();
         });
+
+        window.onload = function() {
+            var hashID = window.location.hash.replace('#', '');
+            var lastID = localStorage.getItem('last_yt_id');
+            var startID = hashID || lastID;
+            if (startID) load(startID);
+        };
     </script>
 </body>
 </html>
