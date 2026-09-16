@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>YouTube Clean</title>
+    <title>YouTube Clean Player</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body {
@@ -13,40 +13,41 @@
         }
         #bar {
             position: fixed;
-            top: 10px;
+            top: 12px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 9999;
+            z-index: 99999;
             display: flex;
             gap: 8px;
-            background: rgba(15, 15, 15, 0.85);
+            background: rgba(20, 20, 20, 0.85);
             padding: 6px 14px;
             border-radius: 20px;
-            opacity: 0.15;
-            transition: opacity 0.25s ease;
+            opacity: 0.2;
+            transition: opacity 0.2s ease;
         }
         #bar:hover, #bar:focus-within {
             opacity: 1;
         }
         input {
-            width: 280px;
+            width: 300px;
             padding: 6px 12px;
-            border: 1px solid #444;
+            border: 1px solid #555;
             border-radius: 12px;
-            background: #181818;
+            background: #111;
             color: #fff;
             font-size: 13px;
             outline: none;
         }
         button {
             padding: 6px 14px;
-            background: #cc0000;
+            background: #e60000;
             color: #fff;
             border: none;
             border-radius: 12px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: bold;
         }
+        button:hover { background: #ff1a1a; }
         .crop-container {
             position: absolute;
             top: 0;
@@ -68,7 +69,7 @@
 <body>
 
     <div id="bar">
-        <input id="u" placeholder="Dán link YouTube vào đây...">
+        <input id="u" placeholder="Dan link YouTube vao day..." autocomplete="off">
         <button onclick="playVideo()">Xem</button>
     </div>
 
@@ -77,26 +78,25 @@
     </div>
 
     <script>
-        function getID(text) {
-            var m = text.match(/(?:youtu\.be\/|watch\?v=|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/);
-            return m ? m[1] : (text.trim().length === 11 ? text.trim() : null);
+        function getID(url) {
+            if (!url) return null;
+            var m = url.match(/(?:youtu\.be\/|watch\?v=|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/);
+            return m ? m[1] : (url.trim().length === 11 ? url.trim() : null);
         }
 
         function load(id) {
             if (!id) return;
-            localStorage.setItem('yt_saved_id', id);
             window.location.hash = id;
             document.getElementById('player').src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&controls=1';
         }
 
         function playVideo() {
-            var val = document.getElementById('u').value;
+            var val = document.getElementById('u').value.trim();
             var id = getID(val);
             if (id) {
                 load(id);
-                document.getElementById('u').value = '';
             } else {
-                alert('Link YouTube khong hop le!');
+                alert('Vui long dan dung link YouTube!');
             }
         }
 
@@ -104,13 +104,17 @@
             if (e.key === 'Enter') playVideo();
         });
 
-        window.addEventListener('DOMContentLoaded', function() {
-            var hashID = window.location.hash.replace('#', '');
-            var savedID = localStorage.getItem('yt_saved_id');
-            var idToPlay = hashID || savedID;
-            if (idToPlay) {
-                load(idToPlay);
+        window.addEventListener('load', function() {
+            var id = window.location.hash.replace('#', '');
+            if (id) {
+                load(id);
+                document.getElementById('u').value = 'https://www.youtube.com/watch?v=' + id;
             }
+        });
+
+        window.addEventListener('hashchange', function() {
+            var id = window.location.hash.replace('#', '');
+            if (id) load(id);
         });
     </script>
 </body>
