@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>YouTube Clean Player</title>
+    <title>YT Clean</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body {
@@ -12,50 +12,47 @@
             background: #000;
         }
 
-        /* Nút popup nhỏ ở góc trên bên trái */
         #nav-box {
             position: fixed;
-            top: 10px;
-            left: 10px;
-            z-index: 99999;
+            top: 8px;
+            left: 8px;
+            z-index: 999999;
             display: flex;
             align-items: center;
-            background: rgba(20, 20, 20, 0.85);
+            background: rgba(15, 15, 15, 0.85);
             backdrop-filter: blur(4px);
             border-radius: 20px;
-            padding: 4px;
+            padding: 3px 6px;
             width: 32px;
             height: 32px;
             overflow: hidden;
-            opacity: 0.15;
-            transition: width 0.25s ease, opacity 0.2s ease, background 0.2s ease;
-            cursor: pointer;
+            opacity: 0.2;
+            transition: all 0.25s ease;
         }
 
-        /* Rê chuột vào hoặc khi đang gõ phím thì tự bung rộng ra */
         #nav-box:hover, #nav-box:focus-within {
-            width: 380px;
+            width: 360px;
             height: 38px;
             opacity: 1;
-            padding: 4px 8px;
+            padding: 4px 10px;
         }
 
-        /* Icon kính lúp / link đại diện ở góc */
         #nav-icon {
-            min-width: 24px;
-            height: 24px;
+            min-width: 20px;
+            height: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #aaa;
-            font-size: 14px;
+            color: #ddd;
+            font-size: 13px;
             user-select: none;
+            cursor: pointer;
         }
 
         #input-wrap {
             display: flex;
             gap: 6px;
-            margin-left: 6px;
+            margin-left: 8px;
             width: 100%;
         }
 
@@ -81,6 +78,7 @@
             font-weight: bold;
             white-space: nowrap;
         }
+
         button:hover { background: #ff1a1a; }
 
         .crop-container {
@@ -91,6 +89,7 @@
             height: 100%;
             overflow: hidden;
         }
+
         iframe {
             position: absolute;
             top: -65px;
@@ -106,7 +105,7 @@
     <div id="nav-box">
         <div id="nav-icon">🔍</div>
         <div id="input-wrap">
-            <input id="u" placeholder="Dán link YouTube vào đây..." autocomplete="off">
+            <input id="u" placeholder="Dan link YouTube vao day..." autocomplete="off">
             <button onclick="playVideo()">Xem</button>
         </div>
     </div>
@@ -134,7 +133,7 @@
             if (id) {
                 load(id);
             } else {
-                alert('Vui lòng dán đúng link YouTube!');
+                alert('Vui long dan dung link YouTube!');
             }
         }
 
