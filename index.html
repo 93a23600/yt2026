@@ -40,7 +40,7 @@
 
         #nav-box:hover,
         #nav-box:focus-within {
-            width: min(520px, calc(100vw - 24px));
+            width: min(640px, calc(100vw - 24px));
             height: 44px;
             opacity: 1;
             padding: 4px 10px;
@@ -61,7 +61,7 @@
 
         #input-wrap {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             margin-left: 8px;
             width: 100%;
         }
@@ -82,7 +82,7 @@
         }
 
         button {
-            padding: 6px 16px;
+            padding: 6px 14px;
             background: #e60000;
             color: #fff;
             border: none;
@@ -96,6 +96,14 @@
 
         button:hover {
             background: #cc0000;
+        }
+
+        .btn-fb {
+            background: #1877f2;
+        }
+
+        .btn-fb:hover {
+            background: #145dbf;
         }
 
         .video-container {
@@ -133,6 +141,7 @@
         <div id="input-wrap">
             <input id="video-input" placeholder="Dán link YouTube hoặc Facebook..." autocomplete="off">
             <button onclick="handlePlay()">Phát</button>
+            <button id="fb-btn" class="btn-fb" onclick="loginFB()">Đăng nhập FB</button>
         </div>
     </div>
 
@@ -140,7 +149,43 @@
         <iframe id="player" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>
     </div>
 
+    <!-- Tích hợp Facebook SDK -->
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js"></script>
+
     <script>
+        // Khởi tạo Facebook SDK với App ID của bạn
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId: '1620713262919921',
+                cookie: true,
+                xfbml: true,
+                version: 'v20.0'
+            });
+
+            FB.getLoginStatus(function(response) {
+                if (response.status === 'connected') {
+                    var btn = document.getElementById("fb-btn");
+                    if (btn) {
+                        btn.innerText = "Đã nối FB";
+                        btn.style.opacity = "0.6";
+                    }
+                }
+            });
+        };
+
+        function loginFB() {
+            if (typeof FB === "undefined") {
+                alert("Đang tải SDK Facebook, vui lòng thử lại sau 2 giây!");
+                return;
+            }
+            FB.login(function(response) {
+                if (response.authResponse) {
+                    alert("Kết nối Facebook thành công!");
+                    location.reload();
+                }
+            }, { scope: 'public_profile' });
+        }
+
         var timer = null;
         var navBox = document.getElementById("nav-box");
         var player = document.getElementById("player");
