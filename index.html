@@ -1,3 +1,11 @@
+    html, body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #000;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
     /* Thanh điều khiển nổi góc trên */
     #nav-box {
         position: fixed;
@@ -154,7 +162,7 @@
         return null;
     }
 
-    // Kiểm tra và xử lý link Facebook
+    // Kiểm tra link Facebook
     function isFacebookUrl(url) {
         return /facebook\.com|fb\.watch/i.test(url);
     }
@@ -166,7 +174,7 @@
         // Trường hợp 1: Facebook Video / Reel
         if (isFacebookUrl(url)) {
             wrapper.className = "video-wrapper"; // Không áp crop của YouTube
-            var cleanFbUrl = url.split("?")[0]; // Bỏ bớt query rác phía sau nếu có
+            var cleanFbUrl = url.split("?")[0];
             var fbEmbed = "https://www.facebook.com/plugins/video.php?href=" + encodeURIComponent(cleanFbUrl) + "&show_text=false&autoplay=1";
             player.src = fbEmbed;
             input.value = cleanFbUrl;
@@ -195,7 +203,7 @@
         if (e.key === "Enter") handlePlay();
     });
 
-    // Đọc hash khi tải trang hoặc khi đổi URL (hỗ trợ lưu bookmark)
+    // Tự động nạp lại video nếu URL có hash bookmark
     function parseHash() {
         var hash = window.location.hash.replace("#", "");
         if (!hash) return;
@@ -207,7 +215,6 @@
             var ytId = hash.substring(3);
             playVideo(ytId);
         } else if (hash.length === 11) {
-            // Tương thích ngược với link cũ chỉ chứa ytID
             playVideo(hash);
         }
     }
