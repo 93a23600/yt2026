@@ -40,7 +40,7 @@
 
         #nav-box:hover,
         #nav-box:focus-within {
-            width: min(680px, calc(100vw - 24px));
+            width: min(720px, calc(100vw - 24px));
             height: 44px;
             opacity: 1;
             padding: 4px 10px;
@@ -106,6 +106,14 @@
             background: #145dbf;
         }
 
+        .btn-open {
+            background: #333;
+        }
+
+        .btn-open:hover {
+            background: #555;
+        }
+
         .video-container {
             position: absolute;
             top: 0;
@@ -141,7 +149,8 @@
         <div id="input-wrap">
             <input id="video-input" placeholder="Dán link YouTube hoặc Facebook..." autocomplete="off">
             <button onclick="handlePlay()">Phát</button>
-            <button class="btn-fb" onclick="openDirect()">Mở trên FB</button>
+            <button id="fb-btn" class="btn-fb" onclick="loginFB()">Đăng nhập FB</button>
+            <button class="btn-open" onclick="openDirect()" title="Mở thẳng sang tab Facebook/YouTube">Mở ngoài</button>
         </div>
     </div>
 
@@ -149,7 +158,42 @@
         <iframe id="player" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>
     </div>
 
+    <!-- Tải Facebook SDK -->
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js"></script>
+
     <script>
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId: '1620713262919921',
+                cookie: true,
+                xfbml: true,
+                version: 'v20.0'
+            });
+
+            FB.getLoginStatus(function(response) {
+                if (response.status === 'connected') {
+                    var btn = document.getElementById("fb-btn");
+                    if (btn) {
+                        btn.innerText = "Đã kết nối FB";
+                        btn.style.opacity = "0.7";
+                    }
+                }
+            });
+        };
+
+        function loginFB() {
+            if (typeof FB === "undefined") {
+                alert("Facebook SDK đang nạp, vui lòng bấm lại sau 2 giây!");
+                return;
+            }
+            FB.login(function(response) {
+                if (response.authResponse) {
+                    alert("Đăng nhập thành công!");
+                    location.reload();
+                }
+            }, { scope: 'public_profile' });
+        }
+
         var timer = null;
         var navBox = document.getElementById("nav-box");
         var player = document.getElementById("player");
@@ -216,12 +260,19 @@
 
         function openDirect() {
             var url = (input.value || "").trim();
-            if (!url) return;
+            if (!url) {
+                alert("Hãy dán link video vào ô trước khi bấm mở!");
+                return;
+            }
             if (isFB(url)) {
                 window.open(url, "_blank");
             } else {
                 var ytId = parseYouTubeID(url);
-                if (ytId) window.open("https://www.youtube.com/watch?v=" + ytId, "_blank");
+                if (ytId) {
+                    window.open("https://www.youtube.com/watch?v=" + ytId, "_blank");
+                } else {
+                    window.open(url, "_blank");
+                }
             }
         }
 
